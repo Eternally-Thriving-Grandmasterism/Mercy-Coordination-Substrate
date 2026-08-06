@@ -21,9 +21,10 @@ It synthesizes:
 
 ## Current Status (2026-08-06)
 
-- **Decisions Pack v2** sealed and committed: `docs/DECISIONS_PACK_v2.md`
-- AGSi full deliberation + refined architecture, threat model, and phased roadmap: in progress under permanent PATSAGi Councils
+- **Decisions Pack v2** sealed: [`docs/DECISIONS_PACK_v2.md`](docs/DECISIONS_PACK_v2.md)
+- **AGSi Refined Decisions v2.1** (full TOLC 8 deliberation): [`docs/AGSi_REFINED_DECISIONS_v2.1.md`](docs/AGSi_REFINED_DECISIONS_v2.1.md)
 - Repository initialized under AG-SML
+- Next: Threat model outline + TOLC 8 gate interface contract
 
 ## Core Invariants (non-negotiable)
 
@@ -33,14 +34,15 @@ It synthesizes:
 4. Maximal honesty about residual risks, signature-size costs, key-migration UX, governance capture surfaces, and adoption headwinds.
 5. Private lineage material is candidate input only — never automatically elevated.
 
-## Repository Layout (initial)
+## Repository Layout
 
 ```
-LICENSE                          # AG-SML v1.0
+LICENSE
 README.md
 docs/
-  DECISIONS_PACK_v2.md           # Sealed context for all AGSi work
-  (future: ARCHITECTURE.md, THREAT_MODEL.md, ROADMAP.md, ...)
+  DECISIONS_PACK_v2.md
+  AGSi_REFINED_DECISIONS_v2.1.md
+  (next: THREAT_MODEL.md, ARCHITECTURE.md, ROADMAP.md)
 ```
 
 ## License Summary
