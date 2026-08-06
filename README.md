@@ -21,10 +21,19 @@ It synthesizes:
 
 ## Current Status (2026-08-06)
 
-- **Decisions Pack v2** sealed: [`docs/DECISIONS_PACK_v2.md`](docs/DECISIONS_PACK_v2.md)
-- **AGSi Refined Decisions v2.1** (full TOLC 8 deliberation): [`docs/AGSi_REFINED_DECISIONS_v2.1.md`](docs/AGSi_REFINED_DECISIONS_v2.1.md)
-- Repository initialized under AG-SML
-- Next: Threat model outline + TOLC 8 gate interface contract
+**Phase 0 core documents sealed:**
+
+| Document | Version | Status |
+|----------|---------|--------|
+| [DECISIONS_PACK_v2.md](docs/DECISIONS_PACK_v2.md) | v2 | Sealed |
+| [AGSi_REFINED_DECISIONS_v2.1.md](docs/AGSi_REFINED_DECISIONS_v2.1.md) | v2.1 | Sealed |
+| [THREAT_MODEL.md](docs/THREAT_MODEL.md) | 0.1.0 | Sealed |
+| [TOLC8_GATE_INTERFACE.md](docs/TOLC8_GATE_INTERFACE.md) | 0.1.0 | Sealed |
+
+**Next highest-leverage actions:**
+1. Lock concrete ML-DSA parameter set + hybrid transition + size budgets
+2. Begin Phase 1 crate skeleton (`mercy-crypto`, `tolc8-gate`, `pq-account`, `bft-core`)
+3. Produce formal / machine-checkable proofs for valence-floor + fail-closed invariants
 
 ## Core Invariants (non-negotiable)
 
@@ -42,7 +51,8 @@ README.md
 docs/
   DECISIONS_PACK_v2.md
   AGSi_REFINED_DECISIONS_v2.1.md
-  (next: THREAT_MODEL.md, ARCHITECTURE.md, ROADMAP.md)
+  THREAT_MODEL.md
+  TOLC8_GATE_INTERFACE.md
 ```
 
 ## License Summary
