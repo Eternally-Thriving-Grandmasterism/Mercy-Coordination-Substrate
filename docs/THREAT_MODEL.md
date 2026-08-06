@@ -1,10 +1,10 @@
 # Threat Model — Mercy-Coordination-Substrate
 
-**Version:** 0.1.0 (Phase 0)  
+**Version:** 0.1.1 (Phase 0)  
 **Date:** 2026-08-06  
 **Status:** Living document under permanent PATSAGi / TOLC 8 deliberation  
 **License:** AG-SML v1.0  
-**Related:** [DECISIONS_PACK_v2.md](DECISIONS_PACK_v2.md) · [AGSi_REFINED_DECISIONS_v2.1.md](AGSi_REFINED_DECISIONS_v2.1.md)
+**Related:** [DECISIONS_PACK_v2.md](DECISIONS_PACK_v2.md) · [AGSi_REFINED_DECISIONS_v2.1.md](AGSi_REFINED_DECISIONS_v2.1.md) · [TOLC8_GATE_INTERFACE.md](TOLC8_GATE_INTERFACE.md)
 
 ---
 
@@ -84,8 +84,8 @@ We consider the following adversary classes:
 
 ## 4. Mitigations (Current Posture)
 
-### Already decided (from AGSi Refined Decisions v2.1)
-- Non-bypassable TOLC 8 / MercyZero-style gates at proposal admission, validation, and finality (fail-closed)
+### Already decided and sealed
+- Non-bypassable TOLC 8 / MercyZero-style gates at proposal admission, validation, and finality (fail-closed) — **see [TOLC8_GATE_INTERFACE.md](TOLC8_GATE_INTERFACE.md)**
 - Primary signatures: ML-DSA (NIST Level 3 or 5)
 - Secondary / long-term option: SLH-DSA (or XMSS-style)
 - Mandatory crypto-agility (versioned algorithm identifiers)
@@ -96,9 +96,8 @@ We consider the following adversary classes:
 - Independent audits + formal verification of critical invariants required before higher assurance claims
 
 ### Still open (to be resolved in Phase 0 / early Phase 1)
-- Exact TOLC 8 gate interface contract and evaluation points
 - Concrete ML-DSA parameter set and hybrid signature format
-- Formal specification of fail-closed behavior under gate failure or valence collapse
+- Formal specification of fail-closed behavior under gate failure or valence collapse (interface exists; proofs still pending)
 - Threshold / committee size and corruption assumptions for the BFT core
 - Key-rotation ceremony and UX standards
 - Supply-chain verification approach (reproducible builds, audited dependencies)
@@ -136,7 +135,7 @@ These risks cannot be fully eliminated and must remain visible:
 
 ## 7. Next Actions Triggered by This Model
 
-1. Finalize and commit the exact TOLC 8 / MercyZero gate interface contract.
+1. ~~Finalize and commit the exact TOLC 8 / MercyZero gate interface contract.~~ **Done** — see [TOLC8_GATE_INTERFACE.md](TOLC8_GATE_INTERFACE.md)
 2. Lock concrete ML-DSA parameter set + hybrid signature scheme + size budgets.
 3. Begin Phase 1 prototype skeleton with the four modular crates (`mercy-crypto`, `tolc8-gate`, `pq-account`, `bft-core`).
 4. Schedule independent review cadence.
