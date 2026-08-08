@@ -1,0 +1,13 @@
+[package]
+name = "tolc8-gate"
+version = "0.1.0"
+edition = "2021"
+license = "LicenseRef-AG-SML-1.0"
+description = "Non-bypassable TOLC 8 / MercyZero-style Gate — Layer 0 of Mercy-Coordination-Substrate"
+repository = "https://github.com/Eternally-Thriving-Grandmasterism/Mercy-Coordination-Substrate"
+authors = ["Autonomicity Games Inc. <info@Rathor.ai>"]
+
+[dependencies]
+
+[features]
+default = []

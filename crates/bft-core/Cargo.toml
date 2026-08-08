@@ -1,0 +1,14 @@
+[package]
+name = "bft-core"
+version = "0.1.0"
+edition = "2021"
+license = "LicenseRef-AG-SML-1.0"
+description = "BFT / HotStuff-variant consensus core with mandatory TOLC 8 gate hooks"
+repository = "https://github.com/Eternally-Thriving-Grandmasterism/Mercy-Coordination-Substrate"
+authors = ["Autonomicity Games Inc. <info@Rathor.ai>"]
+
+[dependencies]
+tolc8-gate = { path = "../tolc8-gate" }
+
+[features]
+default = []

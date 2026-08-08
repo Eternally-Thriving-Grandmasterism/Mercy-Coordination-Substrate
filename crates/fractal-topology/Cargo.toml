@@ -1,0 +1,14 @@
+[package]
+name = "fractal-topology"
+version = "0.1.0"
+edition = "2021"
+license = "LicenseRef-AG-SML-1.0"
+description = "Fractal Topology Engine v14 — recursive self-similar hierarchical scaling for Mercy-Coordination-Substrate"
+repository = "https://github.com/Eternally-Thriving-Grandmasterism/Mercy-Coordination-Substrate"
+authors = ["Autonomicity Games Inc. <info@Rathor.ai>"]
+
+[dependencies]
+tolc8-gate = { path = "../tolc8-gate" }
+
+[features]
+default = []

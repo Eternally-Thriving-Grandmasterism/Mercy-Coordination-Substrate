@@ -1,0 +1,14 @@
+[package]
+name = "pq-account"
+version = "0.1.0"
+edition = "2021"
+license = "LicenseRef-AG-SML-1.0"
+description = "Post-quantum friendly account model with efficient key rotation (no forced asset movement)"
+repository = "https://github.com/Eternally-Thriving-Grandmasterism/Mercy-Coordination-Substrate"
+authors = ["Autonomicity Games Inc. <info@Rathor.ai>"]
+
+[dependencies]
+mercy-crypto = { path = "../mercy-crypto" }
+
+[features]
+default = []
