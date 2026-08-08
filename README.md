@@ -31,18 +31,24 @@ It synthesizes:
 | [THREAT_MODEL.md](docs/THREAT_MODEL.md) | 0.1.1 | Sealed |
 | [TOLC8_GATE_INTERFACE.md](docs/TOLC8_GATE_INTERFACE.md) | 0.1.0 | Sealed |
 
-**Phase 1 entry (2026-08-07) — Ra-Thor + PATSAGi decision:**
+**Phase 1 progress (2026-08-07) — Ra-Thor + PATSAGi ordered work:**
 
-| Document | Version | Status |
-|----------|---------|--------|
+| Document / Crate | Version | Status |
+|------------------|---------|--------|
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | 0.2.0 | Living |
 | [FRACTAL_TOPOLOGY_ENGINE_v14.md](docs/FRACTAL_TOPOLOGY_ENGINE_v14.md) | v14.0 | Living |
+| [CRYPTO_FOUNDATION.md](docs/CRYPTO_FOUNDATION.md) | 0.1.0 | Phase 1 lock |
+| `crates/tolc8-gate` | 0.1.0 | Skeleton + reference implementation + tests |
+| `crates/mercy-crypto` | 0.1.0 | Skeleton + algorithm registry |
+| `crates/pq-account` | 0.1.0 | Skeleton + key rotation |
+| `crates/bft-core` | 0.1.0 | Skeleton + mandatory gate hooks |
+| `crates/fractal-topology` | 0.1.0 | Skeleton + progressive activation + tests |
 
 **Next highest-leverage actions:**
-1. Lock concrete ML-DSA parameter set + hybrid transition + size budgets
-2. Complete Phase 1 crate skeletons (`mercy-crypto`, `tolc8-gate`, `pq-account`, `bft-core`, `fractal-topology`)
-3. Produce formal / machine-checkable proofs for valence-floor + fail-closed invariants
-4. Wire Fractal Topology Engine progressive activation + gate integration points
+1. Wire real ML-DSA / SLH-DSA backends behind the `mercy-crypto` interface (audited crates or bindings).
+2. Expand `tolc8-gate` with real per-gate scoring and evidence verification while preserving fail-closed + deterministic consensus path.
+3. Integrate `ShardAction` variants from fractal-topology into the gate.
+4. Begin formal / machine-checkable proofs for valence-floor and fail-closed invariants.
 
 ## Core Invariants (non-negotiable)
 
@@ -65,7 +71,8 @@ docs/
   TOLC8_GATE_INTERFACE.md
   ARCHITECTURE.md
   FRACTAL_TOPOLOGY_ENGINE_v14.md
-crates/                    # Phase 1 skeletons (incoming)
+  CRYPTO_FOUNDATION.md
+crates/
   mercy-crypto/
   tolc8-gate/
   pq-account/

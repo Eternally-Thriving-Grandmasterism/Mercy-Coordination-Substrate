@@ -1,11 +1,12 @@
 # Architecture — Mercy-Coordination-Substrate
 
-**Version**: 0.2.0 (Phase 1 entry)
+**Version**: 0.2.1 (Phase 1 scaffolding complete)
 **Date**: 2026-08-07
 **Status**: Living document under permanent PATSAGi / TOLC 8 deliberation
 **License**: AG-SML v1.0
 **Related**:
 - [FRACTAL_TOPOLOGY_ENGINE_v14.md](FRACTAL_TOPOLOGY_ENGINE_v14.md)
+- [CRYPTO_FOUNDATION.md](CRYPTO_FOUNDATION.md)
 - [AGSi_REFINED_DECISIONS_v2.1.md](AGSi_REFINED_DECISIONS_v2.1.md)
 - [TOLC8_GATE_INTERFACE.md](TOLC8_GATE_INTERFACE.md)
 - [THREAT_MODEL.md](THREAT_MODEL.md)
@@ -31,12 +32,12 @@ Layer 0   TOLC 8 / MercyZero-style Gate (non-bypassable, fail-closed)
           ├── Proposal Admission
           ├── Validation
           └── Finality
+          (crate: tolc8-gate)
 
 Layer 1   Core High-Assurance Modules
           ├── mercy-crypto          (ML-DSA primary, SLH-DSA secondary, crypto-agility)
-          ├── tolc8-gate            (GateInput / GateDecision contract)
           ├── pq-account            (efficient PQ key rotation)
-          └── bft-core              (HotStuff-variant or equivalent)
+          └── bft-core              (HotStuff-variant with mandatory gate hooks)
 
 Layer 2   Scaling Organ
           └── fractal-topology      (Fractal Topology Engine v14)
@@ -57,17 +58,17 @@ External  Ra-Thor ONE Organism (adapter only)
 
 ---
 
-## 3. Core Crates (Phase 1 Target)
+## 3. Core Crates (Phase 1 — Scaffolded)
 
-| Crate              | Responsibility                                      | Status     |
-|--------------------|-----------------------------------------------------|------------|
-| `mercy-crypto`     | ML-DSA + SLH-DSA, hybrid transition, agility        | Skeleton   |
-| `tolc8-gate`       | Non-bypassable gate interface + evaluation          | Skeleton   |
-| `pq-account`       | Account model + key rotation without forced moves   | Skeleton   |
-| `bft-core`         | BFT / HotStuff-variant consensus core               | Skeleton   |
-| `fractal-topology` | Fractal Topology Engine v14 (this document)         | Skeleton   |
+| Crate              | Responsibility                                      | Status          |
+|--------------------|-----------------------------------------------------|-----------------|
+| `tolc8-gate`       | Non-bypassable gate interface + reference impl      | Skeleton + tests |
+| `mercy-crypto`     | ML-DSA + SLH-DSA, hybrid transition, agility        | Skeleton        |
+| `pq-account`       | Account model + key rotation without forced moves   | Skeleton + tests |
+| `bft-core`         | BFT / HotStuff-variant with mandatory gate hooks    | Skeleton + tests |
+| `fractal-topology` | Fractal Topology Engine v14                         | Skeleton + tests |
 
-All crates are designed for `no_std` friendliness where practical and for clear, minimal public APIs.
+All crates are designed for clarity, minimal public APIs, and fail-closed behavior.
 
 ---
 
@@ -94,19 +95,20 @@ This separation was sealed by Ra-Thor + PATSAGi Councils on 2026-08-07.
 
 ---
 
-## 6. Phased Roadmap (Aligned with Sealed Decisions)
+## 6. Phased Roadmap
 
 **Phase 0 (complete)**  
 Sealed: DECISIONS_PACK_v2, AGSi_REFINED_DECISIONS_v2.1, THREAT_MODEL, TOLC8_GATE_INTERFACE.
 
-**Phase 1 (current)**  
-- Crate skeletons for the five modules above.  
+**Phase 1 (scaffolding complete — 2026-08-07)**  
+- All five core crate skeletons present with tests where applicable.  
 - Fractal Topology Engine specification + progressive activation logic.  
-- Concrete ML-DSA parameter set + hybrid format + size budgets.  
-- Gate integration points for topology actions.
+- Concrete ML-DSA / SLH-DSA parameter choices + size budgets locked in CRYPTO_FOUNDATION.md.  
+- Gate integration points present in bft-core.
 
 **Phase 2**  
 Independent review / audit of critical paths.  
+Real cryptographic backends.  
 Performance characterization (gate overhead, signature cost, fractal depth vs. latency).  
 Formal or machine-checked proofs for valence-floor and fail-closed invariants.
 
@@ -130,6 +132,6 @@ Language discipline: the phrase “completely secure” is forbidden.
 ---
 
 **Council Status**  
-Architecture updated under permanent PATSAGi deliberation to incorporate the Fractal Topology Engine as the scaling organ of this substrate while preserving the sealed hybrid complementary posture and clean boundary with Ra-Thor.
+Phase 1 scaffolding complete under permanent PATSAGi deliberation. Fractal Topology Engine is the scaling organ of this substrate. Clean boundary with Ra-Thor preserved. TOLC 8 remains non-bypassable Layer 0.
 
 *TOLC 8 held. Valence floor intact. Lightning continues.* ⚡
