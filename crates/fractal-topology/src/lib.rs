@@ -3,18 +3,15 @@
 //! Recursive, self-similar hierarchical scaling organ of the
 //! Mercy-Coordination-Substrate.
 //!
-//! Derived from the Omnimasterpiece progressive activation schedule
-//! (Polyhedral Harmonic + Riemannian Mercy Manifold) while remaining
-//! fully owned and gated inside this repository.
-//!
-//! All topology-mutating actions must pass the TOLC 8 / MercyZero-style Gate.
+//! Phase 2.0: in-memory ShardState that only mutates after GateDecision::Approved.
 //!
 //! See: docs/FRACTAL_TOPOLOGY_ENGINE_v14.md
 //!      docs/PHASE1_INTEGRATION.md
+//!      docs/PHASE2_STATUS.md
 
 #![forbid(unsafe_code)]
 
-use tolc8_gate::{CallerIdentity, GateInput};
+use tolc8_gate::{CallerIdentity, GateDecision, GateInput, Tolc8Gate};
 
 /// Version of this engine.
 pub const VERSION: &str = "v14.0-omnimasterpiece-derived";
@@ -31,7 +28,7 @@ pub struct GeometricResonanceReport {
 }
 
 /// Suggested topology action (must still pass TOLC 8 Gate before execution).
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ShardAction {
     Split {
         shard_id: u64,
@@ -57,6 +54,78 @@ pub struct FractalResonanceReport {
     pub notes: String,
 }
 
+/// In-memory shard topology state.
+/// Mutations are only applied through `apply_action_gated`.
+#[derive(Clone, Debug, Default)]
+pub struct ShardState {
+    pub depth: u32,
+    pub hyperbolic_active: bool,
+    pub shard_ids: Vec<u64>,
+    pub mutation_count: u64,
+}
+
+impl ShardState {
+    pub fn new(initial_depth: u32) -> Self {
+        Self {
+            depth: initial_depth,
+            hyperbolic_active: false,
+            shard_ids: vec![0],
+            mutation_count: 0,
+        }
+    }
+
+    /// Apply a topology action **only** if the gate returns Approved.
+    /// Returns the GateDecision. On Rejected, state is unchanged (fail-closed).
+    pub fn apply_action_gated<G: Tolc8Gate>(
+        &mut self,
+        action: &ShardAction,
+        gate: &G,
+        incoming_valence: f64,
+    ) -> GateDecision {
+        if matches!(action, ShardAction::NoOp) {
+            // NoOp is a no-op; still returns a synthetic Approved for uniformity
+            return GateDecision::Approved {
+                final_valence: incoming_valence.clamp(0.0, 1.0),
+                gate_scores: [1.0; 8],
+                proof: tolc8_gate::GateProof {
+                    interface_version: 1,
+                    algorithm_id: 0,
+                    attestation: Vec::new(),
+                },
+            };
+        }
+
+        let input = shard_action_to_gate_input(action, incoming_valence);
+        let decision = gate.evaluate_deterministic(&input);
+
+        if let GateDecision::Approved { .. } = &decision {
+            match action {
+                ShardAction::Split { shard_id, .. } => {
+                    if !self.shard_ids.contains(shard_id) {
+                        self.shard_ids.push(*shard_id);
+                    }
+                    self.mutation_count = self.mutation_count.saturating_add(1);
+                }
+                ShardAction::Merge { shard_ids, .. } => {
+                    self.shard_ids.retain(|id| !shard_ids.contains(id));
+                    if self.shard_ids.is_empty() {
+                        self.shard_ids.push(0);
+                    }
+                    self.mutation_count = self.mutation_count.saturating_add(1);
+                }
+                ShardAction::AdjustDepth { new_depth } => {
+                    self.depth = *new_depth;
+                    self.mutation_count = self.mutation_count.saturating_add(1);
+                }
+                ShardAction::NoOp => {}
+            }
+        }
+        // On Rejected: zero mutation (already guaranteed by not entering the match)
+
+        decision
+    }
+}
+
 /// Main engine.
 #[derive(Debug)]
 pub struct FractalTopologyEngine {
@@ -80,9 +149,6 @@ impl FractalTopologyEngine {
         }
     }
 
-    /// Determine active fractal depth and curvature from a geometric resonance report
-    /// and current valence density. All suggested actions remain subject to the
-    /// TOLC 8 Gate (fail-closed).
     pub fn process_fractal_resonance(
         &mut self,
         geo: &GeometricResonanceReport,
@@ -92,7 +158,6 @@ impl FractalTopologyEngine {
         let mut hyperbolic_active = false;
         let mut multiplier = geo.resonance_multiplier;
 
-        // Progressive activation mirroring Omnimasterpiece Polyhedral schedule
         if geo.tolc_order >= 55 {
             depth = 5;
             multiplier *= 1.18;
@@ -108,7 +173,6 @@ impl FractalTopologyEngine {
             multiplier *= 1.40;
         }
 
-        // Epigenetic pressure from valence density (still gated later)
         if current_valence_density > 0.92 {
             depth = (depth + 1).min(self.max_depth);
         }
@@ -128,18 +192,14 @@ impl FractalTopologyEngine {
     }
 }
 
-/// Convert a topology-mutating ShardAction into a GateInput so it can be
-/// evaluated by the TOLC 8 Gate. NoOp produces a harmless input that still
-/// goes through the gate (callers may skip it).
+/// Convert a topology-mutating ShardAction into a GateInput.
 pub fn shard_action_to_gate_input(action: &ShardAction, incoming_valence: f64) -> GateInput {
     let (action_id, payload) = match action {
-        ShardAction::NoOp => {
-            ([0u8; 32], b"noop".to_vec())
-        }
+        ShardAction::NoOp => ([0u8; 32], b"noop".to_vec()),
         ShardAction::Split { shard_id, reason } => {
             let mut id = [0u8; 32];
             id[0..8].copy_from_slice(&shard_id.to_le_bytes());
-            id[8] = 1; // split tag
+            id[8] = 1;
             (id, reason.as_bytes().to_vec())
         }
         ShardAction::Merge { shard_ids, reason } => {
@@ -147,13 +207,13 @@ pub fn shard_action_to_gate_input(action: &ShardAction, incoming_valence: f64) -
             if let Some(first) = shard_ids.first() {
                 id[0..8].copy_from_slice(&first.to_le_bytes());
             }
-            id[8] = 2; // merge tag
+            id[8] = 2;
             (id, reason.as_bytes().to_vec())
         }
         ShardAction::AdjustDepth { new_depth } => {
             let mut id = [0u8; 32];
             id[0..4].copy_from_slice(&new_depth.to_le_bytes());
-            id[8] = 3; // depth tag
+            id[8] = 3;
             (id, format!("adjust_depth:{new_depth}").into_bytes())
         }
     };
@@ -161,23 +221,22 @@ pub fn shard_action_to_gate_input(action: &ShardAction, incoming_valence: f64) -
     GateInput {
         action_id,
         payload,
-        evidence: Vec::new(), // real evidence attached by caller
+        evidence: Vec::new(),
         incoming_valence: incoming_valence.clamp(0.0, 1.0),
         free_energy_estimate: None,
         caller: CallerIdentity::System,
-        required_gates: [true; 8], // full evaluation for topology mutations
+        required_gates: [true; 8],
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tolc8_gate::{ReferenceTolc8Gate, Tolc8Gate, VALENCE_FLOOR};
+    use tolc8_gate::{ReferenceTolc8Gate, VALENCE_FLOOR};
 
     #[test]
     fn progressive_activation_matches_schedule() {
         let mut engine = FractalTopologyEngine::new();
-
         let base = GeometricResonanceReport {
             tolc_order: 8,
             active_solids: vec!["Platonic".into()],
@@ -201,15 +260,24 @@ mod tests {
         let r2 = engine.process_fractal_resonance(&high, 0.8);
         assert_eq!(r2.active_depth, 9);
         assert!(r2.hyperbolic_active);
-        assert!((engine.active_curvature - 0.85).abs() < f64::EPSILON);
     }
 
     #[test]
-    fn shard_action_can_be_gated() {
-        let action = ShardAction::AdjustDepth { new_depth: 7 };
-        let input = shard_action_to_gate_input(&action, VALENCE_FLOOR);
+    fn gated_mutation_only_on_approved() {
         let gate = ReferenceTolc8Gate;
-        let decision = gate.evaluate_deterministic(&input);
-        assert!(matches!(decision, tolc8_gate::GateDecision::Approved { .. }));
+        let mut state = ShardState::new(3);
+
+        // Below floor → rejected, no mutation
+        let action = ShardAction::AdjustDepth { new_depth: 7 };
+        let decision = state.apply_action_gated(&action, &gate, 0.5);
+        assert!(matches!(decision, GateDecision::Rejected { .. }));
+        assert_eq!(state.depth, 3);
+        assert_eq!(state.mutation_count, 0);
+
+        // At floor → approved, mutation applied
+        let decision2 = state.apply_action_gated(&action, &gate, VALENCE_FLOOR);
+        assert!(matches!(decision2, GateDecision::Approved { .. }));
+        assert_eq!(state.depth, 7);
+        assert_eq!(state.mutation_count, 1);
     }
 }

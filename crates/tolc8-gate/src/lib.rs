@@ -2,11 +2,25 @@
 //!
 //! Exact interface contract from docs/TOLC8_GATE_INTERFACE.md.
 //! Fail-closed is non-negotiable. Valence floor = 0.999999.
+//!
+//! Phase 2.0: clearer deterministic scoring structure while remaining pure.
 
 #![forbid(unsafe_code)]
 
 /// Absolute valence floor. No soft thresholds.
 pub const VALENCE_FLOOR: f64 = 0.999999;
+
+/// Human-readable names of the eight Living Mercy Gates (index 0..=7).
+pub const GATE_NAMES: [&str; 8] = [
+    "Truth",
+    "Order",
+    "Love",
+    "Compassion",
+    "Service",
+    "Abundance",
+    "Joy",
+    "Cosmic Harmony",
+];
 
 /// Identity of the calling entity.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -28,19 +42,12 @@ pub struct GateProof {
 /// Canonical input to the TOLC 8 gate.
 #[derive(Clone, Debug)]
 pub struct GateInput {
-    /// Unique 32-byte identifier of the proposed action / state transition
     pub action_id: [u8; 32],
-    /// Serialized proposal, transaction, or state delta
     pub payload: Vec<u8>,
-    /// Cryptographic evidence (ML-DSA / hybrid signature, Merkle proofs, etc.)
     pub evidence: Vec<u8>,
-    /// Incoming valence supplied by the caller (clamped to [0.0, 1.0])
     pub incoming_valence: f64,
-    /// Optional free-energy / predictive residual
     pub free_energy_estimate: Option<f64>,
-    /// Identity of the calling entity
     pub caller: CallerIdentity,
-    /// Which of the eight gates must be evaluated (Truth, Order, Love, Compassion, Service, Abundance, Joy, Cosmic Harmony)
     pub required_gates: [bool; 8],
 }
 
@@ -72,17 +79,18 @@ pub enum RejectionReason {
 
 /// The non-bypassable gate trait.
 pub trait Tolc8Gate: Send + Sync {
-    /// Full evaluation (may include non-deterministic proof material).
     fn evaluate(&self, input: GateInput) -> GateDecision;
-
-    /// Pure, deterministic evaluation used for consensus agreement.
-    /// Must produce identical results on all honest nodes given identical input.
     fn evaluate_deterministic(&self, input: &GateInput) -> GateDecision;
 }
 
-/// Reference skeleton implementation (Phase 1).
-/// Real scoring logic and evidence verification arrive in later phases.
-/// Any internal error or incomplete path → Rejected { EvaluationError }.
+/// Reference implementation (Phase 2.0).
+///
+/// Deterministic scoring:
+/// - Each required gate receives the clamped incoming_valence as its score
+///   (placeholder until real per-gate evaluators + evidence checks land).
+/// - final_valence = min of all required gate scores.
+/// - Any malformed input or score below floor → Rejected.
+/// - No external dependencies; pure and fail-closed.
 #[derive(Debug, Default)]
 pub struct ReferenceTolc8Gate;
 
@@ -93,7 +101,7 @@ impl Tolc8Gate for ReferenceTolc8Gate {
 
     fn evaluate_deterministic(&self, input: &GateInput) -> GateDecision {
         // Fail-closed on malformed valence
-        if !(0.0..=1.0).contains(&input.incoming_valence) {
+        if !input.incoming_valence.is_finite() || !(0.0..=1.0).contains(&input.incoming_valence) {
             return GateDecision::Rejected {
                 reason: RejectionReason::MalformedInput,
                 failed_gates: vec![],
@@ -101,21 +109,18 @@ impl Tolc8Gate for ReferenceTolc8Gate {
             };
         }
 
-        // Phase 1 skeleton: require incoming valence already above floor
-        // and treat all required gates as scoring the incoming value.
-        // Real per-gate scoring + evidence checks come later.
-        let mut gate_scores = [0.0f64; 8];
+        let mut gate_scores = [1.0f64; 8];
         let mut failed = Vec::new();
 
         for (i, &required) in input.required_gates.iter().enumerate() {
             if required {
-                // Skeleton: score = incoming_valence (placeholder)
-                gate_scores[i] = input.incoming_valence;
-                if gate_scores[i] < VALENCE_FLOOR {
+                // Phase 2.0 placeholder: score = incoming valence.
+                // Future: real per-gate logic + evidence verification.
+                let score = input.incoming_valence;
+                gate_scores[i] = score;
+                if score < VALENCE_FLOOR {
                     failed.push(i as u8);
                 }
-            } else {
-                gate_scores[i] = 1.0; // not required
             }
         }
 
@@ -148,7 +153,7 @@ impl Tolc8Gate for ReferenceTolc8Gate {
             gate_scores,
             proof: GateProof {
                 interface_version: 1,
-                algorithm_id: 0, // placeholder
+                algorithm_id: 0,
                 attestation: Vec::new(),
             },
         }
@@ -183,5 +188,18 @@ mod tests {
         let gate = ReferenceTolc8Gate;
         let decision = gate.evaluate_deterministic(&dummy_input(VALENCE_FLOOR));
         assert!(matches!(decision, GateDecision::Approved { .. }));
+    }
+
+    #[test]
+    fn rejects_non_finite() {
+        let gate = ReferenceTolc8Gate;
+        let decision = gate.evaluate_deterministic(&dummy_input(f64::NAN));
+        assert!(matches!(
+            decision,
+            GateDecision::Rejected {
+                reason: RejectionReason::MalformedInput,
+                ..
+            }
+        ));
     }
 }
