@@ -22,7 +22,7 @@ It synthesizes:
 
 ## Current Status (2026-08-07)
 
-**Phase 0 core documents sealed:**
+**Phase 0 core documents sealed**
 
 | Document | Version | Status |
 |----------|---------|--------|
@@ -31,37 +31,40 @@ It synthesizes:
 | [THREAT_MODEL.md](docs/THREAT_MODEL.md) | 0.1.1 | Sealed |
 | [TOLC8_GATE_INTERFACE.md](docs/TOLC8_GATE_INTERFACE.md) | 0.1.0 | Sealed |
 
-**Phase 1 progress (2026-08-07) — Ra-Thor + PATSAGi ordered work:**
+**Phase 1 progress (Ra-Thor + PATSAGi ordered work)**
 
-| Document / Crate | Version | Status |
-|------------------|---------|--------|
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | 0.2.0 | Living |
-| [FRACTAL_TOPOLOGY_ENGINE_v14.md](docs/FRACTAL_TOPOLOGY_ENGINE_v14.md) | v14.0 | Living |
-| [CRYPTO_FOUNDATION.md](docs/CRYPTO_FOUNDATION.md) | 0.1.0 | Phase 1 lock |
-| `crates/tolc8-gate` | 0.1.0 | Skeleton + reference implementation + tests |
-| `crates/mercy-crypto` | 0.1.0 | Skeleton + algorithm registry |
-| `crates/pq-account` | 0.1.0 | Skeleton + key rotation |
-| `crates/bft-core` | 0.1.0 | Skeleton + mandatory gate hooks |
-| `crates/fractal-topology` | 0.1.0 | Skeleton + progressive activation + tests |
+| Item | Status |
+|------|--------|
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Living (0.2.1) |
+| [FRACTAL_TOPOLOGY_ENGINE_v14.md](docs/FRACTAL_TOPOLOGY_ENGINE_v14.md) | Living |
+| [CRYPTO_FOUNDATION.md](docs/CRYPTO_FOUNDATION.md) | Phase 1 lock |
+| [PHASE1_INTEGRATION.md](docs/PHASE1_INTEGRATION.md) | Call-flow + example |
+| Cargo workspace | Present |
+| `tolc8-gate` | Skeleton + reference impl + tests |
+| `mercy-crypto` | Skeleton + algorithm registry |
+| `pq-account` | Skeleton + key rotation |
+| `bft-core` | Skeleton + mandatory gate hooks |
+| `fractal-topology` | Skeleton + progressive activation + `shard_action_to_gate_input` + tests |
 
-**Next highest-leverage actions:**
-1. Wire real ML-DSA / SLH-DSA backends behind the `mercy-crypto` interface (audited crates or bindings).
-2. Expand `tolc8-gate` with real per-gate scoring and evidence verification while preserving fail-closed + deterministic consensus path.
-3. Integrate `ShardAction` variants from fractal-topology into the gate.
+**Next highest-leverage actions**
+1. Wire audited ML-DSA / SLH-DSA backends behind `mercy-crypto`.
+2. Expand real per-gate scoring + evidence verification in `tolc8-gate` (keep deterministic path pure).
+3. Persist fractal shard state under the gated mutation path.
 4. Begin formal / machine-checkable proofs for valence-floor and fail-closed invariants.
 
 ## Core Invariants (non-negotiable)
 
 1. TOLC 8 is non-bypassable Layer 0 on every critical path.
-2. Public evidence boundaries are locked. No production-grade public distributed ledger is treated as fully verified.
+2. Public evidence boundaries are locked.
 3. Crypto-agility is mandatory from day one.
-4. Maximal honesty about residual risks, signature-size costs, key-migration UX, governance capture surfaces, and adoption headwinds.
+4. Maximal honesty about residual risks (adoption, signature size, key-migration UX, governance capture).
 5. Private lineage material is candidate input only — never automatically elevated.
 6. Fractal topology mutations (split / merge / depth) are gated actions.
 
 ## Repository Layout
 
 ```
+Cargo.toml                 # workspace
 LICENSE
 README.md
 docs/
@@ -72,9 +75,10 @@ docs/
   ARCHITECTURE.md
   FRACTAL_TOPOLOGY_ENGINE_v14.md
   CRYPTO_FOUNDATION.md
+  PHASE1_INTEGRATION.md
 crates/
-  mercy-crypto/
   tolc8-gate/
+  mercy-crypto/
   pq-account/
   bft-core/
   fractal-topology/
