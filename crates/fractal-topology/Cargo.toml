@@ -8,7 +8,7 @@ repository = "https://github.com/Eternally-Thriving-Grandmasterism/Mercy-Coordin
 authors = ["Autonomicity Games Inc. <info@Rathor.ai>"]
 
 [dependencies]
-# Phase 1: keep minimal. Later: serde, thiserror, etc. as needed.
+tolc8-gate = { path = "../tolc8-gate" }
 
 [features]
 default = []

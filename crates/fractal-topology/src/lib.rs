@@ -10,8 +10,11 @@
 //! All topology-mutating actions must pass the TOLC 8 / MercyZero-style Gate.
 //!
 //! See: docs/FRACTAL_TOPOLOGY_ENGINE_v14.md
+//!      docs/PHASE1_INTEGRATION.md
 
 #![forbid(unsafe_code)]
+
+use tolc8_gate::{CallerIdentity, GateInput};
 
 /// Version of this engine.
 pub const VERSION: &str = "v14.0-omnimasterpiece-derived";
@@ -125,9 +128,51 @@ impl FractalTopologyEngine {
     }
 }
 
+/// Convert a topology-mutating ShardAction into a GateInput so it can be
+/// evaluated by the TOLC 8 Gate. NoOp produces a harmless input that still
+/// goes through the gate (callers may skip it).
+pub fn shard_action_to_gate_input(action: &ShardAction, incoming_valence: f64) -> GateInput {
+    let (action_id, payload) = match action {
+        ShardAction::NoOp => {
+            ([0u8; 32], b"noop".to_vec())
+        }
+        ShardAction::Split { shard_id, reason } => {
+            let mut id = [0u8; 32];
+            id[0..8].copy_from_slice(&shard_id.to_le_bytes());
+            id[8] = 1; // split tag
+            (id, reason.as_bytes().to_vec())
+        }
+        ShardAction::Merge { shard_ids, reason } => {
+            let mut id = [0u8; 32];
+            if let Some(first) = shard_ids.first() {
+                id[0..8].copy_from_slice(&first.to_le_bytes());
+            }
+            id[8] = 2; // merge tag
+            (id, reason.as_bytes().to_vec())
+        }
+        ShardAction::AdjustDepth { new_depth } => {
+            let mut id = [0u8; 32];
+            id[0..4].copy_from_slice(&new_depth.to_le_bytes());
+            id[8] = 3; // depth tag
+            (id, format!("adjust_depth:{new_depth}").into_bytes())
+        }
+    };
+
+    GateInput {
+        action_id,
+        payload,
+        evidence: Vec::new(), // real evidence attached by caller
+        incoming_valence: incoming_valence.clamp(0.0, 1.0),
+        free_energy_estimate: None,
+        caller: CallerIdentity::System,
+        required_gates: [true; 8], // full evaluation for topology mutations
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use tolc8_gate::{ReferenceTolc8Gate, Tolc8Gate, VALENCE_FLOOR};
 
     #[test]
     fn progressive_activation_matches_schedule() {
@@ -157,5 +202,14 @@ mod tests {
         assert_eq!(r2.active_depth, 9);
         assert!(r2.hyperbolic_active);
         assert!((engine.active_curvature - 0.85).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn shard_action_can_be_gated() {
+        let action = ShardAction::AdjustDepth { new_depth: 7 };
+        let input = shard_action_to_gate_input(&action, VALENCE_FLOOR);
+        let gate = ReferenceTolc8Gate;
+        let decision = gate.evaluate_deterministic(&input);
+        assert!(matches!(decision, tolc8_gate::GateDecision::Approved { .. }));
     }
 }

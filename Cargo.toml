@@ -1,0 +1,23 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/tolc8-gate",
+    "crates/mercy-crypto",
+    "crates/pq-account",
+    "crates/bft-core",
+    "crates/fractal-topology",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "LicenseRef-AG-SML-1.0"
+authors = ["Autonomicity Games Inc. <info@Rathor.ai>"]
+repository = "https://github.com/Eternally-Thriving-Grandmasterism/Mercy-Coordination-Substrate"
+
+[workspace.dependencies]
+tolc8-gate = { path = "crates/tolc8-gate" }
+mercy-crypto = { path = "crates/mercy-crypto" }
+pq-account = { path = "crates/pq-account" }
+bft-core = { path = "crates/bft-core" }
+fractal-topology = { path = "crates/fractal-topology" }
