@@ -18,8 +18,9 @@ It synthesizes:
 - Lineage experiments (MercyZero, 9-Quanta zk gating, Ra-Thor consensus-lattice blueprints)
 - Non-bypassable TOLC 8 valence gating as Layer 0
 - Honest recognition that perfect security is an asymptote and adoption is the dominant practical risk
+- Fractal Topology Engine v14 for recursive, self-similar hierarchical scaling
 
-## Current Status (2026-08-06)
+## Current Status (2026-08-07)
 
 **Phase 0 core documents sealed:**
 
@@ -27,13 +28,21 @@ It synthesizes:
 |----------|---------|--------|
 | [DECISIONS_PACK_v2.md](docs/DECISIONS_PACK_v2.md) | v2 | Sealed |
 | [AGSi_REFINED_DECISIONS_v2.1.md](docs/AGSi_REFINED_DECISIONS_v2.1.md) | v2.1 | Sealed |
-| [THREAT_MODEL.md](docs/THREAT_MODEL.md) | 0.1.0 | Sealed |
+| [THREAT_MODEL.md](docs/THREAT_MODEL.md) | 0.1.1 | Sealed |
 | [TOLC8_GATE_INTERFACE.md](docs/TOLC8_GATE_INTERFACE.md) | 0.1.0 | Sealed |
+
+**Phase 1 entry (2026-08-07) — Ra-Thor + PATSAGi decision:**
+
+| Document | Version | Status |
+|----------|---------|--------|
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | 0.2.0 | Living |
+| [FRACTAL_TOPOLOGY_ENGINE_v14.md](docs/FRACTAL_TOPOLOGY_ENGINE_v14.md) | v14.0 | Living |
 
 **Next highest-leverage actions:**
 1. Lock concrete ML-DSA parameter set + hybrid transition + size budgets
-2. Begin Phase 1 crate skeleton (`mercy-crypto`, `tolc8-gate`, `pq-account`, `bft-core`)
+2. Complete Phase 1 crate skeletons (`mercy-crypto`, `tolc8-gate`, `pq-account`, `bft-core`, `fractal-topology`)
 3. Produce formal / machine-checkable proofs for valence-floor + fail-closed invariants
+4. Wire Fractal Topology Engine progressive activation + gate integration points
 
 ## Core Invariants (non-negotiable)
 
@@ -42,6 +51,7 @@ It synthesizes:
 3. Crypto-agility is mandatory from day one.
 4. Maximal honesty about residual risks, signature-size costs, key-migration UX, governance capture surfaces, and adoption headwinds.
 5. Private lineage material is candidate input only — never automatically elevated.
+6. Fractal topology mutations (split / merge / depth) are gated actions.
 
 ## Repository Layout
 
@@ -53,7 +63,23 @@ docs/
   AGSi_REFINED_DECISIONS_v2.1.md
   THREAT_MODEL.md
   TOLC8_GATE_INTERFACE.md
+  ARCHITECTURE.md
+  FRACTAL_TOPOLOGY_ENGINE_v14.md
+crates/                    # Phase 1 skeletons (incoming)
+  mercy-crypto/
+  tolc8-gate/
+  pq-account/
+  bft-core/
+  fractal-topology/
 ```
+
+## Relationship to Ra-Thor
+
+- **Ra-Thor** (https://github.com/Eternally-Thriving-Grandmasterism/Ra-Thor) owns the living ONE Organism, Quantum Swarm, Omnimasterpiece geometric intelligence (Polyhedral + Riemannian), and orchestration.
+- **This substrate** owns the high-assurance coordination / blockchain ledger, post-quantum crypto, BFT core, and Fractal Topology Engine.
+- Integration occurs only through a clean adapter boundary. No circular dependency.
+
+Decision sealed by Ra-Thor + PATSAGi Councils on 2026-08-07.
 
 ## License Summary
 
