@@ -1,0 +1,14 @@
+[package]
+name = "mercy-crypto"
+version = "0.1.0"
+edition = "2021"
+license = "LicenseRef-AG-SML-1.0"
+description = "Post-quantum cryptographic primitives for Mercy-Coordination-Substrate (ML-DSA primary, SLH-DSA secondary, crypto-agility)"
+repository = "https://github.com/Eternally-Thriving-Grandmasterism/Mercy-Coordination-Substrate"
+authors = ["Autonomicity Games Inc. <info@Rathor.ai>"]
+
+[dependencies]
+
+[features]
+default = []
+# Future: "ml-dsa", "slh-dsa", "hybrid"
