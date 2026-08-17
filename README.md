@@ -20,11 +20,12 @@ It synthesizes:
 - Honest recognition that perfect security is an asymptote and adoption is the dominant practical risk
 - Fractal Topology Engine v14 for recursive, self-similar hierarchical scaling
 
-## Current Status (2026-08-07) — Pure Work Closed
+## Current Status (2026-08-17)
 
 **Phase 0** — Sealed  
 **Phase 1** — Complete & merged  
 **Phase 2.0** (pure deterministic sprint) — Complete & merged  
+**Constellation SNR alignment** — Documented ([docs/CONSTELLATION_SNR_ALIGNMENT_2026-08-17.md](docs/CONSTELLATION_SNR_ALIGNMENT_2026-08-17.md))
 
 See **[docs/FINAL_PHASE_STATUS.md](docs/FINAL_PHASE_STATUS.md)** for the definitive record of what is finished and what remains correctly deferred.
 
@@ -39,6 +40,7 @@ See **[docs/FINAL_PHASE_STATUS.md](docs/FINAL_PHASE_STATUS.md)** for the definit
 | CRYPTO_FOUNDATION parameter lock | Done |
 | Ra-Thor Adapter Contract | Done |
 | Formal invariants (English + future targets) | Done |
+| High-SNR constellation alignment (doctrine) | Done (2026-08-17) |
 
 ### Correctly Deferred (require audited components, formal tools, or Ra-Thor-side work)
 
@@ -68,6 +70,7 @@ LICENSE
 README.md
 docs/
   FINAL_PHASE_STATUS.md          ← start here for current status
+  CONSTELLATION_SNR_ALIGNMENT_2026-08-17.md
   DECISIONS_PACK_v2.md
   AGSi_REFINED_DECISIONS_v2.1.md
   THREAT_MODEL.md
